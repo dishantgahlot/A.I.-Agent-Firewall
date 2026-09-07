@@ -1,4 +1,5 @@
 from fastapi import FastAPI, HTTPException
+from fastapi.middleware.cors import CORSMiddleware
 from openai import APIConnectionError, APIStatusError, AuthenticationError
 from policy import create_policy
 from pydantic import BaseModel
@@ -11,6 +12,20 @@ import json
 
 
 app = FastAPI()
+
+# Allow the local frontend development server to call this API from another port.
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=[
+        "http://localhost:3000",
+        "http://127.0.0.1:3000",
+        "http://localhost:5173",
+        "http://127.0.0.1:5173",
+    ],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 
 class ExecuteRequest(BaseModel):
